@@ -16,7 +16,7 @@ export function LoginForm() {
     const supabase = createBrowserSupabaseClient();
 
     if (!supabase) {
-      setMessage("Supabase is not configured, so admin demo mode is open.");
+      setMessage("Authentication is not configured yet.");
       return;
     }
 
