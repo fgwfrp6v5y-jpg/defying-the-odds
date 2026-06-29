@@ -1,9 +1,15 @@
 import { NextResponse } from "next/server";
+import { getCurrentUser } from "@/lib/auth";
 import { createServiceSupabaseClient } from "@/lib/supabase";
 import { sendGuestEmail } from "@/lib/email";
 import type { GuestApplication, InterviewSlot } from "@/types";
 
 export async function POST(request: Request) {
+  const currentUser = await getCurrentUser();
+  if (!currentUser?.user.email) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
   const { guestId, slotId } = (await request.json()) as { guestId?: string; slotId?: string };
 
   if (!guestId || !slotId) {
@@ -13,7 +19,19 @@ export async function POST(request: Request) {
   const supabase = createServiceSupabaseClient();
 
   if (!supabase) {
-    return NextResponse.json({ ok: true, demo: true });
+    return NextResponse.json({ error: "Supabase is not configured" }, { status: 503 });
+  }
+
+  const { data: existingGuest, error: existingGuestError } = await supabase
+    .from("guest_applications")
+    .select("*")
+    .eq("id", guestId)
+    .eq("email", currentUser.user.email.toLowerCase())
+    .in("status", ["Approved", "Scheduled"])
+    .single();
+
+  if (existingGuestError || !existingGuest) {
+    return NextResponse.json({ error: "Approved application not found" }, { status: 403 });
   }
 
   const { data: slot, error: slotError } = await supabase

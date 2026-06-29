@@ -1,13 +1,19 @@
 import { NextResponse } from "next/server";
+import { getCurrentUser, isHostRole } from "@/lib/auth";
 import { createServiceSupabaseClient } from "@/lib/supabase";
 import type { InterviewSlot } from "@/types";
 
 export async function POST(request: Request) {
+  const currentUser = await getCurrentUser();
+  if (!currentUser || !isHostRole(currentUser.role)) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
   const slot = (await request.json()) as InterviewSlot;
   const supabase = createServiceSupabaseClient();
 
   if (!supabase) {
-    return NextResponse.json({ slot, demo: true }, { status: 201 });
+    return NextResponse.json({ error: "Supabase is not configured" }, { status: 503 });
   }
 
   const { data, error } = await supabase
@@ -29,6 +35,11 @@ export async function POST(request: Request) {
 }
 
 export async function DELETE(request: Request) {
+  const currentUser = await getCurrentUser();
+  if (!currentUser || !isHostRole(currentUser.role)) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
   const id = new URL(request.url).searchParams.get("id");
 
   if (!id) {
@@ -38,7 +49,7 @@ export async function DELETE(request: Request) {
   const supabase = createServiceSupabaseClient();
 
   if (!supabase) {
-    return NextResponse.json({ ok: true, demo: true });
+    return NextResponse.json({ error: "Supabase is not configured" }, { status: 503 });
   }
 
   const { error } = await supabase.from("interview_slots").delete().eq("id", id);

@@ -1,9 +1,15 @@
 import { NextResponse } from "next/server";
+import { getCurrentUser, isHostRole } from "@/lib/auth";
 import { createServiceSupabaseClient } from "@/lib/supabase";
 import { sendGuestEmail } from "@/lib/email";
 import type { GuestApplication, GuestStatus } from "@/types";
 
 export async function PATCH(request: Request) {
+  const currentUser = await getCurrentUser();
+  if (!currentUser || !isHostRole(currentUser.role)) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
   const { id, ...patch } = (await request.json()) as Partial<GuestApplication> & { id?: string };
 
   if (!id) {
@@ -13,7 +19,7 @@ export async function PATCH(request: Request) {
   const supabase = createServiceSupabaseClient();
 
   if (!supabase) {
-    return NextResponse.json({ ok: true, demo: true });
+    return NextResponse.json({ error: "Supabase is not configured" }, { status: 503 });
   }
 
   const { data, error } = await supabase

@@ -1,7 +1,8 @@
 "use client";
 
 import { useMemo, useState, useTransition } from "react";
-import { CalendarClock, Check, CircleDot, FileText, Mic, Pencil, Search, X } from "lucide-react";
+import { CalendarClock, Check, CircleDot, FileText, Mic, Pencil, Search, Settings, Users, X } from "lucide-react";
+import Link from "next/link";
 import { format } from "date-fns";
 import { Button } from "@/components/button";
 import { Field, TextArea, TextInput } from "@/components/field";
@@ -79,6 +80,16 @@ export function AdminDashboard({ initialGuests, slots }: Props) {
               </div>
             );
           })}
+        </div>
+        <div className="grid grid-cols-2 gap-3">
+          <Link className="rounded border border-ink/10 bg-white p-3 font-bold hover:bg-sage/25" href="/admin/users">
+            <Users className="mb-2 text-moss" size={18} />
+            Users
+          </Link>
+          <Link className="rounded border border-ink/10 bg-white p-3 font-bold hover:bg-sage/25" href="/admin/settings">
+            <Settings className="mb-2 text-moss" size={18} />
+            Settings
+          </Link>
         </div>
         <div className="overflow-hidden rounded border border-ink/10 bg-white shadow-soft">
           {filteredGuests.map((guest) => (

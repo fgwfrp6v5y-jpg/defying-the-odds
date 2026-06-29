@@ -5,11 +5,12 @@ A clean Next.js guest management app for the Defying The Odds podcast, with a pu
 ## Features
 
 - Public guest application form with name, email, phone, social links, bio, topic idea, headshot upload, and availability.
+- Authenticated role-based access for Owner, Admin, and Guest users.
+- Owner-only user role management and security settings pages.
 - Admin dashboard for reviewing applications, approving or rejecting guests, adding notes, scheduling interviews, and moving guests through `Applied`, `Approved`, `Scheduled`, `Recorded`, `Edited`, and `Published`.
-- Guest scheduling page where approved guests pick an available interview slot.
+- Guest scheduling page where approved, logged-in guests pick an available interview slot for their own application.
 - Host calendar page at `/admin/calendar` for creating available slots and blocking unavailable dates.
 - Resend email hooks for application received, guest approved, interview scheduled, and 24-hour reminders.
-- Demo fallback data when Supabase and Resend environment variables are not configured.
 
 ## Setup
 
@@ -30,11 +31,28 @@ A clean Next.js guest management app for the Defying The Odds podcast, with a pu
    RESEND_API_KEY=
    EMAIL_FROM=Defying The Odds <noreply@example.com>
    HOST_EMAIL=host@example.com
+   OWNER_EMAILS=svaden101@gmail.com
    NEXT_PUBLIC_SITE_URL=http://localhost:3000
    REMINDER_CRON_SECRET=
    ```
 
-4. Start the app:
+4. After the owner signs in once, set your owner profile in Supabase:
+
+   ```sql
+   update public.profiles
+   set role = 'owner'
+   where lower(email) = 'svaden101@gmail.com';
+   ```
+
+   Set your wife to `admin` after she signs in:
+
+   ```sql
+   update public.profiles
+   set role = 'admin'
+   where lower(email) = 'her-email@example.com';
+   ```
+
+5. Start the app:
 
    ```bash
    pnpm dev
@@ -43,9 +61,11 @@ A clean Next.js guest management app for the Defying The Odds podcast, with a pu
 ## Pages
 
 - `/` public guest application.
-- `/admin` host review and production dashboard.
-- `/admin/calendar` host slot and blocked-date management.
-- `/schedule` approved guest scheduling page.
+- `/admin` owner/admin-only review and production dashboard.
+- `/admin/calendar` owner/admin-only slot and blocked-date management.
+- `/admin/users` owner-only user and role management.
+- `/admin/settings` owner-only security settings.
+- `/schedule` authenticated guest scheduling page for approved guests only.
 
 ## Reminder Emails
 

@@ -9,6 +9,19 @@ export const STATUSES = [
 
 export type GuestStatus = (typeof STATUSES)[number] | "Rejected";
 
+export const ROLES = ["owner", "admin", "guest"] as const;
+
+export type AppRole = (typeof ROLES)[number];
+
+export type UserProfile = {
+  id: string;
+  email: string;
+  role: AppRole;
+  display_name: string | null;
+  created_at?: string;
+  updated_at?: string;
+};
+
 export type GuestApplication = {
   id: string;
   created_at: string;

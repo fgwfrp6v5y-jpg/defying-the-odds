@@ -4,19 +4,22 @@ import { useMemo, useState, useTransition } from "react";
 import { CalendarCheck, Clock3 } from "lucide-react";
 import { format } from "date-fns";
 import { Button } from "@/components/button";
-import { Field, TextInput } from "@/components/field";
 import type { GuestApplication, InterviewSlot } from "@/types";
 
-export function GuestScheduler({ guests, slots }: { guests: GuestApplication[]; slots: InterviewSlot[] }) {
-  const [email, setEmail] = useState("");
+export function GuestScheduler({
+  guests,
+  slots,
+  currentEmail
+}: {
+  guests: GuestApplication[];
+  slots: InterviewSlot[];
+  currentEmail: string;
+}) {
   const [selectedSlot, setSelectedSlot] = useState("");
   const [message, setMessage] = useState("");
   const [isPending, startTransition] = useTransition();
 
-  const guest = useMemo(
-    () => guests.find((item) => item.email.toLowerCase() === email.trim().toLowerCase()),
-    [email, guests]
-  );
+  const guest = useMemo(() => guests[0], [guests]);
 
   function schedule() {
     setMessage("");
@@ -37,19 +40,17 @@ export function GuestScheduler({ guests, slots }: { guests: GuestApplication[]; 
         <CalendarCheck className="text-moss" size={28} />
         <h1 className="mt-4 text-3xl font-black">Pick an interview time</h1>
         <p className="mt-3 text-sm leading-6 text-moss">
-          Enter the email used on your approved application, then choose one of the host&apos;s available slots.
+          Choose one of the host&apos;s available interview slots for your approved application.
         </p>
-        <div className="mt-5">
-          <Field label="Application email">
-            <TextInput value={email} onChange={(event) => setEmail(event.target.value)} placeholder="you@example.com" />
-          </Field>
-        </div>
+        <p className="mt-5 rounded bg-sage/35 px-3 py-2 text-sm font-bold text-ink">{currentEmail}</p>
       </section>
       <section className="rounded border border-ink/10 bg-white p-5 shadow-soft">
         <div className="flex items-center justify-between gap-4">
           <div>
             <h2 className="text-xl font-black">Available slots</h2>
-            <p className="text-sm font-semibold text-moss">{guest ? `Scheduling for ${guest.name}` : "Verify your email to continue"}</p>
+            <p className="text-sm font-semibold text-moss">
+              {guest ? `Scheduling for ${guest.name}` : "No approved application is available for this account"}
+            </p>
           </div>
           <Clock3 className="text-moss" size={24} />
         </div>
