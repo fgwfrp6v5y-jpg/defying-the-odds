@@ -14,7 +14,7 @@ export function LoginForm() {
   const redirectTo = searchParams.get("redirectTo") ?? "/schedule";
 
   async function login(formData: FormData) {
-    const email = String(formData.get("email") ?? "");
+    const email = String(formData.get("email") ?? "").trim().toLowerCase();
     const password = String(formData.get("password") ?? "");
     const intent = String(formData.get("intent") ?? "password");
     const supabase = createBrowserSupabaseClient();
@@ -32,7 +32,7 @@ export function LoginForm() {
 
       const { error } = await supabase.auth.signInWithPassword({ email, password });
       if (error) {
-        setMessage(error.message);
+        setMessage(error.message.includes("Invalid login credentials") ? "That email exists, but the password did not match. Use the magic-link button or reset the password." : error.message);
         return;
       }
 
