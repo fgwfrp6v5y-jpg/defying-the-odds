@@ -5,12 +5,19 @@ import type { GuestApplication, InterviewSlot, SiteContent, UserProfile } from "
 export const defaultSiteContent: SiteContent = {
   id: "homepage",
   brand_name: "Defying The Odds",
-  eyebrow: "Guest application",
-  headline: "Bring your best story to the mic.",
+  eyebrow: "Stories that refuse the easy ending",
+  headline: "Defying The Odds",
   intro:
-    "Share your background, topic idea, headshot, and interview availability. The host will review your pitch and send scheduling details if it is a fit.",
+    "A podcast and creator hub for honest conversations about resilience, rebuilding, faith, family, and the moments that change everything.",
+  about_heading: "About Abby",
+  bio:
+    "Abby Vaden hosts Defying The Odds to create space for people with real stories, hard-won perspective, and hope that still has a pulse. Follow along for conversations, behind-the-scenes updates, and guest stories from people choosing courage in ordinary life.",
+  application_heading: "Apply to be a guest",
+  application_intro:
+    "Have a story or topic that fits Defying The Odds? Share your background, idea, headshot, and availability below.",
   hero_image_url: null,
-  hero_image_alt: "Defying The Odds podcast artwork"
+  hero_image_alt: "Defying The Odds podcast artwork",
+  social_links: []
 };
 
 export async function getGuests(): Promise<GuestApplication[]> {
@@ -136,5 +143,5 @@ export async function getSiteContent(): Promise<SiteContent> {
     return defaultSiteContent;
   }
 
-  return (data as SiteContent | null) ?? defaultSiteContent;
+  return { ...defaultSiteContent, ...((data as Partial<SiteContent> | null) ?? {}) };
 }

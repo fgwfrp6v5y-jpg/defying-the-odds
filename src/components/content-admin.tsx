@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useTransition } from "react";
-import { ImagePlus, Save, Type } from "lucide-react";
+import { ImagePlus, Link2, Save, Type } from "lucide-react";
 import { Button } from "@/components/button";
 import { Field, TextArea, TextInput } from "@/components/field";
 import { createBrowserSupabaseClient } from "@/lib/supabase";
@@ -47,8 +47,19 @@ export function ContentAdmin({ initialContent }: { initialContent: SiteContent }
           eyebrow: String(formData.get("eyebrow") ?? ""),
           headline: String(formData.get("headline") ?? ""),
           intro: String(formData.get("intro") ?? ""),
+          about_heading: String(formData.get("aboutHeading") ?? ""),
+          bio: String(formData.get("bio") ?? ""),
+          application_heading: String(formData.get("applicationHeading") ?? ""),
+          application_intro: String(formData.get("applicationIntro") ?? ""),
           hero_image_url: heroImageUrl,
-          hero_image_alt: String(formData.get("heroImageAlt") ?? "")
+          hero_image_alt: String(formData.get("heroImageAlt") ?? ""),
+          social_links: String(formData.get("socialLinks") ?? "")
+            .split("\n")
+            .map((line) => {
+              const [label, ...urlParts] = line.split("|");
+              return { label: label?.trim() ?? "", url: urlParts.join("|").trim() };
+            })
+            .filter((link) => link.label && link.url)
         };
 
         const response = await fetch("/api/admin/content", {
@@ -77,7 +88,7 @@ export function ContentAdmin({ initialContent }: { initialContent: SiteContent }
         <Type className="text-moss" size={28} />
         <h1 className="mt-4 text-3xl font-black">Homepage content</h1>
         <p className="mt-2 text-sm leading-6 text-moss">
-          Update the public guest application page and upload podcast artwork.
+          Update the public homepage, social links, bio, guest CTA, and podcast artwork.
         </p>
         <div className="mt-6 grid gap-5">
           <Field label="Brand name">
@@ -91,6 +102,24 @@ export function ContentAdmin({ initialContent }: { initialContent: SiteContent }
           </Field>
           <Field label="Intro">
             <TextArea name="intro" required defaultValue={content.intro} />
+          </Field>
+          <Field label="About heading">
+            <TextInput name="aboutHeading" required defaultValue={content.about_heading} />
+          </Field>
+          <Field label="Bio">
+            <TextArea name="bio" required defaultValue={content.bio} />
+          </Field>
+          <Field label="Social links" hint="One per line using Label | URL, for example Instagram | https://instagram.com/name">
+            <TextArea
+              name="socialLinks"
+              defaultValue={content.social_links.map((link) => `${link.label} | ${link.url}`).join("\n")}
+            />
+          </Field>
+          <Field label="Guest application heading">
+            <TextInput name="applicationHeading" required defaultValue={content.application_heading} />
+          </Field>
+          <Field label="Guest application intro">
+            <TextArea name="applicationIntro" required defaultValue={content.application_intro} />
           </Field>
           <Field label="Podcast image alt text">
             <TextInput name="heroImageAlt" defaultValue={content.hero_image_alt ?? ""} />
@@ -132,6 +161,14 @@ export function ContentAdmin({ initialContent }: { initialContent: SiteContent }
         )}
         <h2 className="mt-5 text-2xl font-black">{content.headline}</h2>
         <p className="mt-2 text-sm leading-6 text-moss">{content.intro}</p>
+        <div className="mt-4 grid gap-2">
+          {content.social_links.map((link) => (
+            <p className="flex items-center gap-2 text-sm font-bold" key={`${link.label}-${link.url}`}>
+              <Link2 size={15} className="text-moss" />
+              {link.label}
+            </p>
+          ))}
+        </div>
       </aside>
     </main>
   );

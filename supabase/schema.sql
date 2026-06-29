@@ -71,8 +71,13 @@ create table public.site_content (
   eyebrow text not null default 'Guest application',
   headline text not null default 'Bring your best story to the mic.',
   intro text not null default 'Share your background, topic idea, headshot, and interview availability. The host will review your pitch and send scheduling details if it is a fit.',
+  about_heading text not null default 'About Abby',
+  bio text not null default 'Abby Vaden hosts Defying The Odds to create space for people with real stories, hard-won perspective, and hope that still has a pulse.',
+  application_heading text not null default 'Apply to be a guest',
+  application_intro text not null default 'Have a story or topic that fits Defying The Odds? Share your background, idea, headshot, and availability below.',
   hero_image_url text,
-  hero_image_alt text
+  hero_image_alt text,
+  social_links jsonb not null default '[]'::jsonb
 );
 
 create index guest_applications_status_idx on public.guest_applications(status);

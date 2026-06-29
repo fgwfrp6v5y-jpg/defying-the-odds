@@ -16,12 +16,17 @@ export async function PATCH(request: Request) {
     eyebrow: String(payload.eyebrow ?? "Guest application").trim(),
     headline: String(payload.headline ?? "").trim(),
     intro: String(payload.intro ?? "").trim(),
+    about_heading: String(payload.about_heading ?? "About Abby").trim(),
+    bio: String(payload.bio ?? "").trim(),
+    application_heading: String(payload.application_heading ?? "Apply to be a guest").trim(),
+    application_intro: String(payload.application_intro ?? "").trim(),
     hero_image_url: payload.hero_image_url || null,
-    hero_image_alt: payload.hero_image_alt || null
+    hero_image_alt: payload.hero_image_alt || null,
+    social_links: Array.isArray(payload.social_links) ? payload.social_links : []
   };
 
-  if (!content.headline || !content.intro) {
-    return NextResponse.json({ error: "Headline and intro are required" }, { status: 400 });
+  if (!content.headline || !content.intro || !content.bio) {
+    return NextResponse.json({ error: "Headline, intro, and bio are required" }, { status: 400 });
   }
 
   const supabase = createServiceSupabaseClient();

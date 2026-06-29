@@ -69,7 +69,15 @@ export type SiteContent = {
   eyebrow: string;
   headline: string;
   intro: string;
+  about_heading: string;
+  bio: string;
+  application_heading: string;
+  application_intro: string;
   hero_image_url: string | null;
   hero_image_alt: string | null;
+  social_links: Array<{
+    label: string;
+    url: string;
+  }>;
   updated_at?: string;
 };
