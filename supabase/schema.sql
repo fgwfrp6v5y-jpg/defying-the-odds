@@ -64,6 +64,17 @@ create table public.email_events (
   status text not null default 'queued'
 );
 
+create table public.site_content (
+  id text primary key default 'homepage',
+  updated_at timestamptz not null default now(),
+  brand_name text not null default 'Defying The Odds',
+  eyebrow text not null default 'Guest application',
+  headline text not null default 'Bring your best story to the mic.',
+  intro text not null default 'Share your background, topic idea, headshot, and interview availability. The host will review your pitch and send scheduling details if it is a fit.',
+  hero_image_url text,
+  hero_image_alt text
+);
+
 create index guest_applications_status_idx on public.guest_applications(status);
 create index guest_applications_email_idx on public.guest_applications(lower(email));
 create index interview_slots_starts_at_idx on public.interview_slots(starts_at);
@@ -83,6 +94,10 @@ for each row execute function public.set_updated_at();
 
 create trigger guest_applications_updated_at
 before update on public.guest_applications
+for each row execute function public.set_updated_at();
+
+create trigger site_content_updated_at
+before update on public.site_content
 for each row execute function public.set_updated_at();
 
 create or replace function public.handle_new_user()
@@ -136,6 +151,7 @@ alter table public.profiles enable row level security;
 alter table public.guest_applications enable row level security;
 alter table public.interview_slots enable row level security;
 alter table public.email_events enable row level security;
+alter table public.site_content enable row level security;
 
 create policy "Users can read their own profile"
 on public.profiles for select
@@ -205,9 +221,28 @@ to authenticated
 using (public.is_host())
 with check (public.is_host());
 
+create policy "Public can read site content"
+on public.site_content for select
+to anon, authenticated
+using (true);
+
+create policy "Hosts manage site content"
+on public.site_content for all
+to authenticated
+using (public.is_host())
+with check (public.is_host());
+
+insert into public.site_content (id)
+values ('homepage')
+on conflict (id) do nothing;
+
 insert into storage.buckets (id, name, public)
 values ('headshots', 'headshots', false)
 on conflict (id) do update set public = false;
+
+insert into storage.buckets (id, name, public)
+values ('site-assets', 'site-assets', true)
+on conflict (id) do update set public = true;
 
 create policy "Public can upload headshots"
 on storage.objects for insert
@@ -224,3 +259,24 @@ on storage.objects for all
 to authenticated
 using (bucket_id = 'headshots' and public.is_host())
 with check (bucket_id = 'headshots' and public.is_host());
+
+create policy "Public can read site assets"
+on storage.objects for select
+to public
+using (bucket_id = 'site-assets');
+
+create policy "Hosts can upload site assets"
+on storage.objects for insert
+to authenticated
+with check (bucket_id = 'site-assets' and public.is_host());
+
+create policy "Hosts can update site assets"
+on storage.objects for update
+to authenticated
+using (bucket_id = 'site-assets' and public.is_host())
+with check (bucket_id = 'site-assets' and public.is_host());
+
+create policy "Hosts can delete site assets"
+on storage.objects for delete
+to authenticated
+using (bucket_id = 'site-assets' and public.is_host());

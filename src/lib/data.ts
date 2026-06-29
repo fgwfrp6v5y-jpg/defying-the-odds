@@ -1,6 +1,17 @@
 import { createServiceSupabaseClient } from "@/lib/supabase";
 import { mockGuests, mockSlots } from "@/lib/mock-data";
-import type { GuestApplication, InterviewSlot, UserProfile } from "@/types";
+import type { GuestApplication, InterviewSlot, SiteContent, UserProfile } from "@/types";
+
+export const defaultSiteContent: SiteContent = {
+  id: "homepage",
+  brand_name: "Defying The Odds",
+  eyebrow: "Guest application",
+  headline: "Bring your best story to the mic.",
+  intro:
+    "Share your background, topic idea, headshot, and interview availability. The host will review your pitch and send scheduling details if it is a fit.",
+  hero_image_url: null,
+  hero_image_alt: "Defying The Odds podcast artwork"
+};
 
 export async function getGuests(): Promise<GuestApplication[]> {
   const supabase = createServiceSupabaseClient();
@@ -105,4 +116,25 @@ export async function getProfiles(): Promise<UserProfile[]> {
   }
 
   return data as UserProfile[];
+}
+
+export async function getSiteContent(): Promise<SiteContent> {
+  const supabase = createServiceSupabaseClient();
+
+  if (!supabase) {
+    return defaultSiteContent;
+  }
+
+  const { data, error } = await supabase
+    .from("site_content")
+    .select("*")
+    .eq("id", "homepage")
+    .maybeSingle();
+
+  if (error) {
+    console.error(error);
+    return defaultSiteContent;
+  }
+
+  return (data as SiteContent | null) ?? defaultSiteContent;
 }

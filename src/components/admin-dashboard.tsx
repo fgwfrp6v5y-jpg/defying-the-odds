@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo, useState, useTransition } from "react";
-import { CalendarClock, Check, CircleDot, FileText, Mic, Pencil, Search, Settings, Users, X } from "lucide-react";
+import { CalendarClock, Check, CircleDot, FileText, ImagePlus, Mic, Pencil, Search, Settings, Users, X } from "lucide-react";
 import Link from "next/link";
 import { format } from "date-fns";
 import { Button } from "@/components/button";
@@ -81,7 +81,11 @@ export function AdminDashboard({ initialGuests, slots }: Props) {
             );
           })}
         </div>
-        <div className="grid grid-cols-2 gap-3">
+        <div className="grid grid-cols-3 gap-3">
+          <Link className="rounded border border-ink/10 bg-white p-3 font-bold hover:bg-sage/25" href="/admin/content">
+            <ImagePlus className="mb-2 text-moss" size={18} />
+            Content
+          </Link>
           <Link className="rounded border border-ink/10 bg-white p-3 font-bold hover:bg-sage/25" href="/admin/users">
             <Users className="mb-2 text-moss" size={18} />
             Users

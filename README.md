@@ -7,6 +7,7 @@ A clean Next.js guest management app for the Defying The Odds podcast, with a pu
 - Public guest application form with name, email, phone, social links, bio, topic idea, headshot upload, and availability.
 - Authenticated role-based access for Owner, Admin, and Guest users.
 - Owner-only user role management and security settings pages.
+- Owner/admin homepage content editor with public podcast artwork upload.
 - Admin dashboard for reviewing applications, approving or rejecting guests, adding notes, scheduling interviews, and moving guests through `Applied`, `Approved`, `Scheduled`, `Recorded`, `Edited`, and `Published`.
 - Guest scheduling page where approved, logged-in guests pick an available interview slot for their own application.
 - Host calendar page at `/admin/calendar` for creating available slots and blocking unavailable dates.
@@ -63,8 +64,10 @@ A clean Next.js guest management app for the Defying The Odds podcast, with a pu
 - `/` public guest application.
 - `/admin` owner/admin-only review and production dashboard.
 - `/admin/calendar` owner/admin-only slot and blocked-date management.
+- `/admin/content` owner/admin homepage copy and podcast artwork editor.
 - `/admin/users` owner-only user and role management.
 - `/admin/settings` owner-only security settings.
+- `/account/security` authenticated password management.
 - `/schedule` authenticated guest scheduling page for approved guests only.
 
 ## Reminder Emails

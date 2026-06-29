@@ -62,3 +62,14 @@ export type ApplicationPayload = {
   headshotUrl?: string;
   availability: string;
 };
+
+export type SiteContent = {
+  id: "homepage";
+  brand_name: string;
+  eyebrow: string;
+  headline: string;
+  intro: string;
+  hero_image_url: string | null;
+  hero_image_alt: string | null;
+  updated_at?: string;
+};

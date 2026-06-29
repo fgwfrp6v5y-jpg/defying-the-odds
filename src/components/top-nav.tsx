@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { CalendarDays, ClipboardList, LogIn, Mic2 } from "lucide-react";
+import { CalendarDays, ClipboardList, KeyRound, LogIn, Mic2 } from "lucide-react";
 
 export function TopNav() {
   return (
@@ -23,6 +23,10 @@ export function TopNav() {
           <Link className="rounded px-3 py-2 hover:bg-ink/5" href="/login">
             <span className="hidden sm:inline">Login</span>
             <LogIn className="sm:hidden" size={20} />
+          </Link>
+          <Link className="rounded px-3 py-2 hover:bg-ink/5" href="/account/security">
+            <span className="hidden sm:inline">Password</span>
+            <KeyRound className="sm:hidden" size={20} />
           </Link>
         </nav>
       </div>

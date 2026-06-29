@@ -65,8 +65,9 @@ export async function middleware(request: NextRequest) {
   const path = request.nextUrl.pathname;
   const isAdminPath = path.startsWith("/admin") || path.startsWith("/api/admin");
   const isSchedulePath = path === "/schedule" || path.startsWith("/api/schedule");
+  const isAccountPath = path.startsWith("/account");
 
-  if (!isAdminPath && !isSchedulePath) {
+  if (!isAdminPath && !isSchedulePath && !isAccountPath) {
     return NextResponse.next();
   }
 
@@ -85,5 +86,5 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/admin/:path*", "/schedule", "/api/admin/:path*", "/api/schedule"]
+  matcher: ["/admin/:path*", "/schedule", "/account/:path*", "/api/admin/:path*", "/api/schedule"]
 };
